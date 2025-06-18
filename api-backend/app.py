@@ -1,12 +1,15 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 from flask_cors import CORS
 import mysql.connector
 from mysql.connector import Error
 import os
-
+# ✅ Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+# Database Configuration from Environment Variables (with fallback)
 db_config = {
     'host': os.environ.get('DB_HOST', '127.0.0.1'),
     'database': os.environ.get('DB_NAME', 'myproject_db'),
@@ -18,7 +21,7 @@ def get_db_connection():
     try:
         return mysql.connector.connect(**db_config)
     except Error as e:
-        print(f"Error: {e}")
+        print(f"Database Connection Error: {e}")
         return None
 
 @app.route('/')
@@ -111,7 +114,6 @@ def get_category(id):
     finally:
         cursor.close()
         conn.close()
-
 
 @app.route('/api/categories', methods=['POST'])
 def create_category():
@@ -222,6 +224,8 @@ def delete_product(id):
     finally:
         cursor.close()
         conn.close()
+
+# ------------------- Run the App -------------------
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
