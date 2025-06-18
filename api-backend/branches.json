@@ -1,0 +1,9 @@
+[
+    {
+        "email": "main@example.com",
+        "name": "Main Branch",
+        "logo": "storage/branch_logos/logo.jpg",
+        "phone": "123456789",
+        "id": 1
+    }
+]
