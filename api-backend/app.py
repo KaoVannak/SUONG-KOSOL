@@ -2,15 +2,16 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import mysql.connector
 from mysql.connector import Error
+import os
 
 app = Flask(__name__)
 CORS(app)
 
 db_config = {
-    'host': '127.0.0.1',
-    'database': 'myproject_db',
-    'user': 'root',
-    'password': ''
+    'host': os.environ.get('DB_HOST', '127.0.0.1'),
+    'database': os.environ.get('DB_NAME', 'myproject_db'),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', '')
 }
 
 def get_db_connection():
@@ -19,6 +20,10 @@ def get_db_connection():
     except Error as e:
         print(f"Error: {e}")
         return None
+
+@app.route('/')
+def index():
+    return "API is running!"
 
 # ------------------- Branches -------------------
 
@@ -219,4 +224,6 @@ def delete_product(id):
         conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ['true', '1', 't']
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
